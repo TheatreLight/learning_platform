@@ -13,6 +13,7 @@ public interface CourseMapper {
     @Mapping(target = "modules", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
     @Mapping(target = "reviews", ignore = true)
+    @Mapping(target = "tags", ignore = true)
     Course toEntity(CourseDto courseDto);
 
     @Mapping(target = "categoryId", source = "category.id")

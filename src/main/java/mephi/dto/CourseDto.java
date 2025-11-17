@@ -11,6 +11,7 @@ import mephi.entity.Course;
 @Getter
 @Setter
 public class CourseDto {
+    private Long id;
     private String title;
     private String description;
     private int duration;

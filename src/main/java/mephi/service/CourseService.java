@@ -1,5 +1,7 @@
 package mephi.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import mephi.dto.CourseDto;
 import mephi.dto.UserDto;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CourseService {
     private CourseRepository courseRepository;
     private CategoryRepository categoryRepository;
@@ -58,6 +61,37 @@ public class CourseService {
 
         Course savedCourse = courseRepository.save(course);
         return courseMapper.toDto(savedCourse);
+    }
+
+    public CourseDto updateCourse(Long id, CourseDto courseDto) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+
+        course.setTitle(courseDto.getTitle());
+        course.setDescription(courseDto.getDescription());
+        course.setDuration(courseDto.getDuration());
+
+        if (courseDto.getCategoryId() != null && !courseDto.getCategoryId().equals(course.getCategory().getId())) {
+            Category category = categoryRepository.findById(courseDto.getCategoryId())
+                    .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + courseDto.getCategoryId()));
+            course.setCategory(category);
+        }
+
+        if (courseDto.getTeacherId() != null && !courseDto.getTeacherId().equals(course.getTeacher().getId())) {
+            User teacher = userRepository.findById(courseDto.getTeacherId())
+                    .orElseThrow(() -> new EntityNotFoundException("Teacher not found with id: " + courseDto.getTeacherId()));
+            course.setTeacher(teacher);
+        }
+
+        Course updated = courseRepository.save(course);
+        return courseMapper.toDto(updated);
+    }
+
+    public void deleteCourse(Long id) {
+        if (!courseRepository.existsById(id)) {
+            throw new EntityNotFoundException("Course not found with id: " + id);
+        }
+        courseRepository.deleteById(id);
     }
 
     public List<UserDto> getAllUsersByCourse(Long courseId) {

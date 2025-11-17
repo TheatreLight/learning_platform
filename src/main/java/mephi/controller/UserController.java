@@ -47,4 +47,14 @@ public class UserController {
     public EnrollmentDto createEnrollment(@RequestParam("userId") Long userId, @RequestParam("courseId") Long courseId) {
         return enrollService.createEnrollment(userId, courseId);
     }
+
+    @PutMapping("/user/{id}")
+    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+        return userService.updateUser(id, userDto);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
 }

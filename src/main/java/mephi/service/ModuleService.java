@@ -1,5 +1,7 @@
 package mephi.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import mephi.dto.ModuleDto;
 import mephi.entity.Course;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class ModuleService {
     private ModuleRepository moduleRepository;
     private CourseRepository courseRepository;
@@ -28,12 +31,43 @@ public class ModuleService {
         return resultList;
     }
 
+    public ModuleDto getById(Long id) {
+        Module module = moduleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Module not found with id: " + id));
+        return moduleMapper.toDto(module);
+    }
+
     public ModuleDto createModule(ModuleDto moduleDto) {
         Module module = moduleMapper.toEntity(moduleDto);
         Course course = courseRepository.findById(moduleDto.getCourseId())
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + moduleDto.getCourseId()));
         module.setCourse(course);
         var saved = moduleRepository.save(module);
         return moduleMapper.toDto(saved);
+    }
+
+    public ModuleDto updateModule(Long id, ModuleDto moduleDto) {
+        Module module = moduleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Module not found with id: " + id));
+
+        module.setTitle(moduleDto.getTitle());
+        module.setOrderIndex(moduleDto.getOrderIndex());
+        module.setDescription(moduleDto.getDescription());
+
+        if (moduleDto.getCourseId() != null && !moduleDto.getCourseId().equals(module.getCourse().getId())) {
+            Course course = courseRepository.findById(moduleDto.getCourseId())
+                    .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + moduleDto.getCourseId()));
+            module.setCourse(course);
+        }
+
+        Module updated = moduleRepository.save(module);
+        return moduleMapper.toDto(updated);
+    }
+
+    public void deleteModule(Long id) {
+        if (!moduleRepository.existsById(id)) {
+            throw new EntityNotFoundException("Module not found with id: " + id);
+        }
+        moduleRepository.deleteById(id);
     }
 }

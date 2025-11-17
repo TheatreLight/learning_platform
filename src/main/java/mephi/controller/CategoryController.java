@@ -3,10 +3,7 @@ package mephi.controller;
 import lombok.AllArgsConstructor;
 import mephi.dto.CategoryDto;
 import mephi.service.CategoryService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,13 +12,28 @@ import java.util.List;
 public class CategoryController {
     private CategoryService categoryService;
 
-    @GetMapping("categories/all")
+    @GetMapping("/categories/all")
     public List<CategoryDto> getAllCategories() {
         return categoryService.getList();
     }
 
-    @PostMapping("categories/create")
+    @GetMapping("/categories/{id}")
+    public CategoryDto getCategoryById(@PathVariable Long id) {
+        return categoryService.getById(id);
+    }
+
+    @PostMapping("/categories/create")
     public CategoryDto createCategory(@RequestBody CategoryDto categoryDto) {
         return categoryService.createCategory(categoryDto);
+    }
+
+    @PutMapping("/categories/{id}")
+    public CategoryDto updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
+        return categoryService.updateCategory(id, categoryDto);
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public void deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
     }
 }

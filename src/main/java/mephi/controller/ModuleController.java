@@ -17,8 +17,23 @@ public class ModuleController {
         return moduleService.getByCourseId(id);
     }
 
+    @GetMapping("/modules/{id}")
+    public ModuleDto getModuleById(@PathVariable Long id) {
+        return moduleService.getById(id);
+    }
+
     @PostMapping("/modules/create")
     public ModuleDto createModule(@RequestBody ModuleDto moduleDto) {
         return moduleService.createModule(moduleDto);
+    }
+
+    @PutMapping("/modules/{id}")
+    public ModuleDto updateModule(@PathVariable Long id, @RequestBody ModuleDto moduleDto) {
+        return moduleService.updateModule(id, moduleDto);
+    }
+
+    @DeleteMapping("/modules/{id}")
+    public void deleteModule(@PathVariable Long id) {
+        moduleService.deleteModule(id);
     }
 }

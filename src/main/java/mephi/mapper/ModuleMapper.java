@@ -9,8 +9,10 @@ import org.mapstruct.Mapping;
 public interface ModuleMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "course", ignore = true)
-    public mephi.entity.Module toEntity(ModuleDto moduleDto);
+    @Mapping(target = "lessons", ignore = true)
+    @Mapping(target = "quiz", ignore = true)
+    mephi.entity.Module toEntity(ModuleDto moduleDto);
 
     @Mapping(target = "courseId", source = "course.id")
-    public ModuleDto toDto(Module module);
+    ModuleDto toDto(Module module);
 }

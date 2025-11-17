@@ -1,5 +1,7 @@
 package mephi.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mephi.dto.UserDto;
 import mephi.entity.Enrollment;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollRepository;
@@ -21,7 +24,7 @@ public class UserService {
 
     public UserDto getUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
         return userMapper.toDto(user);
     }
 
@@ -41,5 +44,24 @@ public class UserService {
         }
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
+    }
+
+    public UserDto updateUser(Long id, UserDto userDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setRole(userDto.getRole());
+
+        User updated = userRepository.save(user);
+        return userMapper.toDto(updated);
+    }
+
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found with id: " + id);
+        }
+        userRepository.deleteById(id);
     }
 }

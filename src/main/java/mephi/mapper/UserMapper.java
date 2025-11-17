@@ -10,6 +10,9 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "courses", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
+    @Mapping(target = "submissions", ignore = true)
+    @Mapping(target = "quizSubmissions", ignore = true)
+    @Mapping(target = "reviews", ignore = true)
     User toEntity(UserDto userDto);
 
     UserDto toDto(User user);
