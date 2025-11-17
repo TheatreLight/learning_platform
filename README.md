@@ -826,5 +826,5 @@ curl http://localhost:8080/api/quizzes/submissions/student/2
 
 ---
 
-**Автор**: [Ваше имя]
+**Автор**: Ivan Zykov
 **Дата**: Ноябрь 2025
